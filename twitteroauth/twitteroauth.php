@@ -31,10 +31,12 @@ class TwitterOAuth {
   public $decode_json = TRUE;
   /* Contains the last HTTP headers returned. */
   public $http_info;
-  /* Set the useragnet. */
+  /* Set the useragent. */
   public $useragent = 'TwitterOAuth v0.2.0-beta2';
   /* Immediately retry the API call if the response was not successful. */
   //public $retry = TRUE;
+  /* Curl error number after curl_exec(). */
+  public $errno;
 
 
 
@@ -162,7 +164,7 @@ class TwitterOAuth {
   }
 
   /**
-   * DELETE wrapper for oAuthReqeust.
+   * DELETE wrapper for oAuthRequest.
    */
   function delete($url, $parameters = array()) {
     $response = $this->oAuthRequest($url, 'DELETE', $parameters);
@@ -223,6 +225,7 @@ class TwitterOAuth {
 
     curl_setopt($ci, CURLOPT_URL, $url);
     $response = curl_exec($ci);
+    $this->errno = curl_errno($ci);
     $this->http_code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
     $this->http_info = array_merge($this->http_info, curl_getinfo($ci));
     $this->url = $url;
